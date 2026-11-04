@@ -241,14 +241,21 @@ function look(): void {
 function renderMap(): void {
   map.innerHTML = SECTIONS.map(s => `<button type="button" class="b-go" data-go="${s.id}" data-done="${secFilled(s)}">
     <span class="b-go-h">${t(s.h)}</span></button>`).join("");
+  chainKey = "";
   chain();
 }
 
 /** Small arrows from each section to the next; the rows snake (every other one runs right to left) so each arrow is short */
+let chainKey = "";
 function chain(): void {
   const tiles = [...map.querySelectorAll<HTMLElement>(".b-go")];
+  // progress() calls this on every keystroke: measuring the map each time made typing lag on phones, so redraw only when
+  // the arrows would change (columns, size, ticks; renderMap() starts over) — brief.css: 2 columns up to 640px, else 3
+  const cols = matchMedia("(max-width:640px)").matches ? 2 : 3;
+  const key = `${cols} ${map.clientWidth}x${map.clientHeight} ${tiles.map(el => el.dataset.done).join()}`;
+  if (key === chainKey) return;
+  chainKey = key;
   tiles.forEach(el => { el.style.gridRow = el.style.gridColumn = ""; }); // a placed tile would keep an extra column alive
-  const cols = getComputedStyle(map).gridTemplateColumns.split(" ").length;
   tiles.forEach((el, i) => {
     const r = Math.floor(i / cols), c = i % cols;
     el.style.gridRow = String(r + 1);
@@ -329,6 +336,7 @@ map.addEventListener("click", e => {
   const b = (e.target as HTMLElement).closest<HTMLElement>("[data-go]");
   if (!b) return;
   const d = document.getElementById(`sec-${b.dataset.go}`) as HTMLDetailsElement;
+  if (!d.open) requestAnimationFrame(() => unfold(d));
   d.open = true;
   d.scrollIntoView({ behavior: "smooth", block: "start" });
 });
@@ -356,6 +364,24 @@ const closeTips = (keep?: Element): void =>
   form.querySelectorAll(".b-info[aria-expanded=\"true\"]").forEach(b => { if (b !== keep) b.setAttribute("aria-expanded", "false"); });
 document.addEventListener("click", e => { if (!(e.target as HTMLElement).closest(".b-info")) closeTips(); });
 
+/** A section's answers fade and slide in when it opens and out before it closes. Only opacity and transform move:
+ *  the phone's GPU does that alone, without laying out or repainting the page (animating the height did both, every frame) */
+const motion = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+function unfold(d: HTMLDetailsElement): void {
+  if (motion) d.querySelector(".b-body")?.animate([{ opacity: 0, transform: "translateY(-12px)" }, { opacity: 1, transform: "none" }],
+    { duration: 280, easing: "cubic-bezier(.16,1,.3,1)" });
+}
+function fold(d: HTMLDetailsElement): void {
+  const body = d.querySelector(".b-body");
+  if (!motion || !body) { d.open = false; return; }
+  if (d.dataset.folding) return;
+  d.dataset.folding = "1";
+  const close = (): void => { if (d.dataset.folding) { d.open = false; delete d.dataset.folding; } };
+  body.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-8px)" }], { duration: 150, easing: "ease-in" })
+    .finished.then(close);
+  setTimeout(close, 250); // a page in the background runs no animations: close anyway
+}
+
 form.addEventListener("click", e => {
   const el = e.target as HTMLElement;
   const info = el.closest<HTMLElement>(".b-info");
@@ -366,6 +392,12 @@ form.addEventListener("click", e => {
     return;
   }
   if (el.closest(".b-tip")) { e.preventDefault(); return; } // reading the hint mustn't fold the section
+  const sum = el.closest<HTMLElement>(".b-sec>summary");
+  if (sum) { // folding changes no answer: nothing to save or recount
+    const d = sum.parentElement as HTMLDetailsElement;
+    if (d.open) { e.preventDefault(); fold(d); } else requestAnimationFrame(() => unfold(d));
+    return;
+  }
   const chip = el.closest<HTMLElement>("[data-chip]");
   if (chip) {
     const k = chip.dataset.chip!, n = +chip.dataset.n!;

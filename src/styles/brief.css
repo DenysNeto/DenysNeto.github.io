@@ -36,13 +36,6 @@
 .b-sec>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:16px}
 .b-sec>summary::-webkit-details-marker{display:none}
 .b-sec>summary:focus:not(:focus-visible){outline:none} /* a tap leaves focus on the title: no ring for that, only for the keyboard */
-/* folding and unfolding slide, where the browser can animate to "auto" (Chrome, Android); elsewhere it just opens.
-   The clip margin keeps the clay shadows near the edges from being cut */
-.b-sec{interpolate-size:allow-keywords}
-.b-sec::details-content{block-size:0;overflow:clip;overflow-clip-margin:24px;
-  transition:block-size .38s var(--ease),content-visibility .38s allow-discrete}
-.b-sec[open]::details-content{block-size:auto}
-@media (prefers-reduced-motion:reduce){.b-sec::details-content{transition:none}}
 /* a chevron in the well (clay.css gives the well): points down while folded, up and mint when open.
    The picture changes, not the well, so its pressed-in shading keeps the light from above */
 .b-sec>summary::after{content:"";flex:none;width:38px;height:38px;border-radius:50%;
@@ -326,3 +319,15 @@
 
 /* the brief and its bar are hidden after sending; their own display rules must not bring them back */
 .b-main [hidden]{display:none !important}
+
+/* phones: the same clay pieces with a fraction of the drawing work. The full recipe (clay.css) stacks eleven shadows,
+   five of them blurred, on every card, chip and button, and on the page-tall board; a phone redraws them whenever a section
+   opens. Here: the lit rim, the thick side and a small contact shadow, none with a big blur. Wells keep one soft inner shadow */
+@media (max-width:640px){
+  .brief-page :is(.top .wrap,.b-main,.b-sec,.b-bar,.b-result,.b-go,.b-n,.chip,.pal,.mood,.ref-x,.btn){
+    --vol:inset 0 2px 1px var(--hl),0 calc(var(--tt) * .5) 0 var(--side-1),0 var(--tt) 0 var(--side-2),
+      0 calc(var(--tt) + 3px) 6px var(--ao),var(--glow,0 0 transparent)}
+  .brief-page :is(.f input:not([type=color]):not([type=file]),.f textarea,.msel-btn,.drop,.thumbs li,.b-sec>summary::after,.langs){
+    box-shadow:inset 0 3px 5px -1px var(--well-sh),0 1px 0 var(--hl)}
+  .brief-page .pal[aria-pressed="true"],.brief-page .mood[aria-pressed="true"]{--glow:0 0 0 3px var(--m-b)}
+}
