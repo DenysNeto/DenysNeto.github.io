@@ -1,0 +1,45 @@
+/* What ties the page together: background mood per section, the clay bands between sections,
+   and the rail drawn through the sections while scrolling. Driven by core/flow.ts and core/thread.ts */
+
+/* background mood: core/flow.ts sets data-mood on .field from the section in the middle of the screen */
+.field{--m1:var(--pink);--m2:var(--sky);--m3:var(--peach);--m4:var(--mintc);--m5:var(--lilac)}
+.field[data-mood="rose"]{--m1:var(--pink);--m2:var(--peach);--m3:var(--lilac);--m4:var(--pink);--m5:var(--butter)}
+.field[data-mood="sky"]{--m1:var(--sky);--m2:var(--lilac);--m3:var(--mintc);--m4:var(--sky);--m5:var(--pink)}
+.field[data-mood="lilac"]{--m1:var(--lilac);--m2:var(--pink);--m3:var(--sky);--m4:var(--lilac);--m5:var(--butter)}
+.field[data-mood="butter"]{--m1:var(--butter);--m2:var(--peach);--m3:var(--mintc);--m4:var(--butter);--m5:var(--pink)}
+.field[data-mood="mint"]{--m1:var(--mintc);--m2:var(--sky);--m3:var(--butter);--m4:var(--mintc);--m5:var(--lilac)}
+.field[data-mood="peach"]{--m1:var(--peach);--m2:var(--pink);--m3:var(--butter);--m4:var(--lilac);--m5:var(--peach)}
+.field[data-mood="iri"]{--m1:var(--pink);--m2:var(--mintc);--m3:var(--sky);--m4:var(--butter);--m5:var(--lilac)}
+
+/* sections lie straight on the background; every other one sits on a clay band with wavy edges (clay.css, the SVGs are in index.html) */
+.sheet{position:relative}
+.sheet>section{position:relative;z-index:1}
+
+/* rail (core/thread.ts): a groove down the page gutters with a mint line drawn up to where the reader is, and a numbered clay key
+   at every section heading that presses in once the line reaches it. Painted once; scrolling only slides the clip box and the bead.
+   Above the sections: the clay bands would cover it otherwise; it only runs through the gutters */
+.thread{position:absolute;inset:0;z-index:2;pointer-events:none}
+.thread svg{position:absolute;left:0;top:0;width:100%;overflow:visible}
+.t-clip{position:absolute;left:0;right:0;top:0;height:0;overflow:hidden;will-change:transform}
+.t-line{will-change:transform} /* own layers: sliding them reveals the line without repainting it */
+.thread .track{fill:none;stroke:var(--well);stroke-width:16;stroke-linecap:round}
+.thread .glow{fill:none;stroke:var(--m-c);stroke-width:20;stroke-opacity:.22;stroke-linecap:round}
+.thread .line{fill:none;stroke:var(--m-c);stroke-width:8;stroke-linecap:round}
+.thread .bead{position:absolute;left:-11px;top:-11px;width:22px;height:22px;border-radius:50%;will-change:transform;transition:opacity .3s;
+  background:radial-gradient(circle at 34% 28%,#fff 0,var(--m-b) 45%,var(--m-c) 100%);box-shadow:0 4px 0 var(--m-s2),0 8px 10px var(--ao),0 0 18px var(--glow-c)}
+.key{position:absolute;width:48px;height:48px;margin:-24px 0 0 -24px;display:grid;place-items:center;border-radius:17px;
+  font:700 .9rem/1 var(--body);color:var(--muted);transition:transform .3s var(--ease),box-shadow .3s,color .3s;
+  background:radial-gradient(120% 110% at 24% 8%,var(--top-a) 0,var(--top-b) 36%,var(--top-c) 100%);
+  box-shadow:inset 0 3px 2px var(--hl),inset 0 -10px 14px -8px var(--curve),0 5px 0 var(--side-1),0 10px 0 var(--side-2),0 14px 10px var(--ao),3px 28px 30px -10px var(--cast)}
+.key.lit{color:var(--on-mint);transform:translateY(7px);
+  background:radial-gradient(120% 110% at 24% 8%,var(--m-a) 0,var(--m-b) 36%,var(--m-c) 100%);
+  box-shadow:inset 0 3px 2px rgba(255,255,255,.85),inset 0 -8px 12px -8px rgba(20,100,70,.3),0 3px 0 var(--m-s2),0 6px 6px var(--ao),0 0 24px -2px var(--glow-c)}
+/* narrower gutters: smaller keys; on phones they sit above the heading instead of on it */
+@media (max-width:1100px){.key{width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:13px;font-size:.78rem}}
+@media (max-width:640px){
+  .thread .track{stroke-width:10}.thread .line{stroke-width:5}.thread .glow{stroke-width:12}
+  .thread .bead{left:-8px;top:-8px;width:16px;height:16px} /* sized, not scaled: scale would also shrink its offset */
+  .key{width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:10px;font-size:.66rem;translate:6px -50px}
+  .key.r{translate:-6px -50px} /* keys on the right-hand gutter would be cut by the screen edge */
+}
+@media (prefers-reduced-motion:reduce){.key{transition:none}}

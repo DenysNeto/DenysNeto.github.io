@@ -1,0 +1,294 @@
+/* "Глина и мята" (references/prototypes/portfolio-6-glina-myata.html): every surface is a molded clay piece —
+   a puffy top lit from the upper left, a thick side, a contact shadow and a long soft cast shadow. One mint accent.
+   Pressed-in parts (fields, tracks, trays) are wells. Loaded after the other styles and overrides the glass look.
+
+   Volume: --th = how thick a piece is, times --vk (depth mode). "Глубже" is the default; html[data-depth="flat"] is "Обычный"
+   (main.ts reads ?depth=). Colour sets (--top-*, --side-*) are swapped per piece for mint and grey.
+   Blur radii are tokens so phones (phone.css) can draw the same shapes with smaller, cheaper blurs.
+   The brief page (brief.css) pulls this file in too: its pieces (.b-*, .chip, .pal, .mood, .fonts, form fields) are on the same lists. */
+
+/* a piece's thickness and extra outer shadows are its own: inherited, a card's slabs or glow would repeat under every button inside it */
+@property --th{syntax:"<length>";inherits:false;initial-value:8px}
+@property --glow{syntax:"*";inherits:false}
+@property --lift{syntax:"<number>";inherits:false;initial-value:1} /* 0 = flat on the surface, 1 = full thickness (scroll effects) */
+:root{
+  --vk:1.9;
+  --top-a:#5A536A; --top-b:#403A4D; --top-c:#2E2A37;
+  --side-1:#221F2A; --side-2:#17151D;
+  --hl:rgba(255,255,255,.16); --curve:rgba(0,0,0,.45); --ao:rgba(0,0,0,.55); --cast:rgba(0,0,0,.75);
+  --well:#1E1B26; --well-sh:rgba(0,0,0,.7); --well-hl:rgba(255,255,255,.07);
+  --m-a:#EFFDF7; --m-b:#B2EED5; --m-c:#7CD3B0; --m-s1:#3F9E7A; --m-s2:#2E7F61; --on-mint:#0D3828;
+  --g-a:#625B72; --g-b:#4A4457; --g-c:#383343; --g-s1:#24202C; --g-s2:#19161F; --on-grey:#DCD7E4;
+  --glow-c:rgba(90,215,165,.6);
+  --grid:rgba(255,255,255,.06); --rule:rgba(255,255,255,.3);
+  --blur-cast:60px; --blur-curve:26px; --blur-flank:20px; --blur-hl:36px;
+  /* the old tokens now point at the clay look: iridescent accents become mint, faint glass fills become wells */
+  --iri:linear-gradient(150deg,var(--m-a),var(--m-b) 50%,var(--m-c));
+  --glass-s:var(--well);
+  --forest:#8EDBBC; --forest-hover:#B2EED5;
+  --lilac:#8EDBBC;
+  /* the hero stage's clay objects: white, grey and mint instead of peach and lilac */
+  --clay-peach:#4A4457; --clay-peach-deep:#2E2A37;
+  --clay-lilac:var(--m-b); --clay-lilac-deep:var(--m-c);
+  --clay-mint:var(--m-b); --clay-mint-deep:var(--m-c);
+  --stage-panel:#3A3546; --stage-panel-edge:#24202D;
+}
+:root[data-depth="flat"]{--vk:1}
+/* ---------- the volume recipe ---------- */
+.top .wrap,.hero>.wrap,.b-main,.contact .wrap,.case,.pain-face,.plan,.calc,.cmp-wrap,.cta-row,.partner,.stick,.review,.faq details,.price-list li,
+.owner-note,.hero-glass,.hg-hit,.hg-notif,.hero-proof,.mbar,.btn,.tab,.preset,.facts li,.pt-ico,.pain-ico,.plan-badge,.pain-tag,
+.review-tag,.ba-tag,.ba-after,.contact-steps li,.step-meta div,.steps .n,.hg-ico,.burger,.cost-q,.to-top,
+.b-sec,.b-bar,.b-result,.b-go,.b-n,.chip,.pal,.mood,.ref-x{
+  --tt:calc(var(--th,8px) * var(--vk) * var(--lift,1));
+  border:0;backdrop-filter:none;-webkit-backdrop-filter:none;
+  /* the recipe is also kept as --vol-bg/--vol, so more specific state rules can reuse it */
+  --vol-bg:radial-gradient(120% 110% at 24% 8%,var(--top-a) 0,var(--top-b) 36%,var(--top-c) 100%);
+  --vol:
+    inset 0 3px 2px var(--hl),                                            /* lit rim along the top edge */
+    inset 0 -18px var(--blur-curve) -12px var(--curve),                   /* the top rolls over towards the bottom edge */
+    inset 14px 0 var(--blur-flank) -16px var(--hl),                       /* lit left flank */
+    inset -14px 0 var(--blur-flank) -14px var(--curve),                   /* shaded right flank */
+    inset 22px 26px var(--blur-hl) -28px var(--hl),                       /* soft highlight in the upper left */
+    0 calc(var(--tt) * .25) 0 var(--side-1),                              /* the side in four bands reads as a rounded edge */
+    0 calc(var(--tt) * .5) 0 color-mix(in srgb,var(--side-1),var(--side-2)),
+    0 calc(var(--tt) * .75) 0 var(--side-2),
+    0 var(--tt) 0 color-mix(in srgb,var(--side-2) 78%,#000),
+    0 calc(var(--tt) + 4px) 8px var(--ao),                                /* contact shadow */
+    calc(var(--tt) * .4) calc(var(--tt) + 34px) var(--blur-cast) -12px var(--cast), /* cast down-right, away from the light */
+    var(--glow,0 0 transparent);
+  background:var(--vol-bg);box-shadow:var(--vol)}
+/* older rules that are more specific than the list above (states, the contact block) */
+.plan.rec,.tab[aria-pressed="true"],.preset[aria-pressed="true"],.steps li.on .n,.contact .btn-lemon,.contact .btn-line,.contact .btn-line:hover,
+.chip[aria-pressed="true"],.pal[aria-pressed="true"],.mood[aria-pressed="true"]{
+  border:0;background:var(--vol-bg);box-shadow:var(--vol)}
+/* colour sets */
+.btn-primary,.btn-lemon,.pt-ico,.plan-badge,.pain-tag,.review-tag,.ba-after,.hg-ico,.tab[aria-pressed="true"],.preset[aria-pressed="true"],
+.steps li.on .n,.steps li.on .step-meta div:last-child,.hero-proof .hg-ico,.owner-note .hg-ico,.pain-back,
+.chip[aria-pressed="true"],[data-done="true"] .b-n{
+  --top-a:var(--m-a);--top-b:var(--m-b);--top-c:var(--m-c);--side-1:var(--m-s1);--side-2:var(--m-s2);
+  --hl:rgba(255,255,255,.85);--curve:rgba(20,100,70,.28);color:var(--on-mint)}
+.btn-ghost,.btn-soft,.btn-line,.burger,.cost-q,.to-top,.b-go,.b-n,.chip,.pal,.mood,.ref-x{
+  --top-a:var(--g-a);--top-b:var(--g-b);--top-c:var(--g-c);--side-1:var(--g-s1);--side-2:var(--g-s2);color:var(--on-grey)}
+/* wells: pressed into the clay */
+.cost-hint,.hero-eyebrow,.langs,.kinds,.hg-search .hg-bar,.hg-res,.pl-price,.pl-inc span,.calc-out,.ba-before,.faq summary::after,
+.f input:not([type=color]):not([type=file]),.f textarea,.msel-btn,.drop,.thumbs li,.b-sec>summary::after,.fonts{
+  border:0;background:var(--well);
+  box-shadow:inset 0 calc(6px * var(--vk)) calc(10px * var(--vk)) -3px var(--well-sh),inset 0 -2px 2px var(--well-hl),inset 4px 0 8px -5px var(--well-sh),0 1px 0 var(--hl)}
+
+/* thickness per kind of piece */
+.hero>.wrap,.b-main,.contact .wrap{--th:16px}
+.case,.pain-face,.plan,.calc,.cmp-wrap,.stick,.review,.hero-glass,.hg-hit,.b-sec,.b-result{--th:10px}
+.cta-row,.partner,.faq details,.price-list li{--th:8px}
+.top .wrap,.mbar,.btn,.owner-note,.hg-notif,.hero-proof,.steps .n,.ba-after,.b-bar{--th:6px}
+.tab,.preset,.pt-ico,.pain-ico,.hg-ico,.b-go,.chip,.pal,.mood{--th:5px}
+.facts li,.plan-badge,.pain-tag,.review-tag,.ba-tag,.contact-steps li,.step-meta div,.burger,.cost-q,.b-n,.ref-x{--th:4px}
+
+/* type: bolder headings, letters pressed into the clay */
+/* section intros lie straight on the busy pearl background: nearly ink, with a soft halo of the page colour behind the letters */
+.lead{color:color-mix(in srgb,var(--ink) 92%,var(--paper));text-shadow:0 0 14px var(--paper),0 0 4px var(--paper),0 1px 1px var(--paper)}
+h1,h2{font-weight:600;letter-spacing:-.04em}
+:is(h1,h2,h3,.calc-big,.plan-price){text-shadow:0 1px 0 var(--hl)}
+
+/* ---------- buttons: a pill that sinks on press ---------- */
+/* buttons keep the thinner "Обычный" depth in every mode: deep buttons looked too heavy next to the cards */
+.btn,.burger,.tab,.preset,.cost-q,.to-top,.b-go,.b-n,.chip,.pal,.mood,.ref-x{--vk:1}
+.btn{font-weight:600;transition:transform .14s,box-shadow .14s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary:hover,.btn-lemon:hover{--glow:0 0 26px 2px var(--glow-c),0 0 0 3px color-mix(in srgb,var(--m-b) 60%,transparent)}
+.btn:active{--th:2px;transform:translateY(calc(4px * var(--vk)))}
+.btn-ghost:hover,.btn-soft:hover,.btn-line:hover{background:radial-gradient(120% 110% at 24% 8%,var(--top-a) 0,var(--top-b) 36%,var(--top-c) 100%);color:var(--on-grey);filter:none}
+.nav .nav-ctas .btn{color:var(--on-mint)}
+.nav .nav-ctas .btn-ghost{color:var(--on-grey)}
+
+/* ---------- header ---------- */
+.langs{padding:5px;border-radius:999px}
+.langs button{background:transparent;color:var(--muted);font-weight:600}
+.langs button[aria-pressed="true"]{color:var(--on-mint);background:radial-gradient(120% 110% at 24% 8%,var(--m-a) 0,var(--m-b) 36%,var(--m-c) 100%);
+  box-shadow:inset 0 2px 1px rgba(255,255,255,.85),0 calc(1.5px * var(--vk)) 0 var(--m-s1),0 calc(3px * var(--vk)) 0 var(--m-s2),0 calc(3px * var(--vk) + 3px) 6px var(--ao)}
+.nav a:hover,.nav a[aria-current]{background:var(--well);box-shadow:inset 0 5px 9px -3px var(--well-sh)}
+@media (max-width:980px){
+  .burger{background:radial-gradient(120% 110% at 24% 8%,var(--top-a) 0,var(--top-b) 36%,var(--top-c) 100%)}
+  .nav{--th:8px;--tt:calc(var(--th) * var(--vk));border:0;background:var(--top-b);
+    box-shadow:inset 0 3px 2px var(--hl),0 var(--tt) 0 var(--side-2),calc(var(--tt) * .4) calc(var(--tt) + 30px) 50px -12px var(--cast)}
+}
+
+/* ---------- hero: a thick styleguide board with blueprint rulers and column guides (the brief page lies on the same board) ---------- */
+:is(.hero>.wrap,.b-main){position:relative}
+:is(.hero>.wrap,.b-main)>*{position:relative;z-index:1}
+:is(.hero>.wrap,.b-main)::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:
+    repeating-linear-gradient(180deg,var(--rule) 0 1px,transparent 1px 10px) 14px 44px/6px calc(100% - 88px) no-repeat,
+    repeating-linear-gradient(180deg,var(--rule) 0 1px,transparent 1px 50px) 14px 44px/11px calc(100% - 88px) no-repeat,
+    repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px calc(100% / 12))}
+:is(.hero>.wrap,.b-main)::after{content:"";position:absolute;left:44px;right:44px;top:12px;height:11px;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px 10px) left top/100% 6px no-repeat,
+    repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px 50px) left top/100% 11px no-repeat}
+.hero-eyebrow{color:var(--muted)}
+.pt-ico{--th:6px;width:56px;height:56px;border-radius:19px}
+.pt-ico svg{width:34px;height:34px;stroke-width:1.9}
+.hero-points{gap:calc(6px * var(--vk) + 12px)}
+.hero-points li{gap:16px}
+.facts li{font-weight:500}
+.facts li::before{color:var(--forest)}
+.hero-proof .hg-ico,.owner-note .hg-ico{--th:4px;color:var(--on-mint)}
+
+/* the stage: the glass panel becomes a clay panel tilted in 3D, its layers stand off it at different depths */
+.stage-scene{perspective:1300px}
+.stage-scene::before{display:none} /* the board itself is the backdrop now */
+.hero-glass{transform-style:preserve-3d;rotate:.55 -1 0 15deg;border-radius:30px;padding:18px 16px 30px;gap:14px}
+.arc-peach{background:radial-gradient(circle at 35% 30%,#fff 0,var(--top-b) 45%,var(--top-c) 100%)}
+.hero-glass>*{translate:0 0 var(--z,0px)}
+.hg-search{--z:30px;transform-style:preserve-3d;background:none;box-shadow:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.hg-search .hg-bar{border-radius:999px;padding:10px 14px}
+.hg-res{border-radius:18px;padding:10px 12px;color:var(--off,var(--muted))}
+.hg-flag{background:var(--top-b);box-shadow:0 2px 0 var(--side-1)}
+.hg-hit{margin-top:4px;border-radius:20px;padding:12px;outline:2px solid transparent;outline-offset:0}
+.hg-hit b{color:var(--ink)}
+.hg-shots i{--th:3px;--tt:calc(var(--th) * var(--vk));background:radial-gradient(120% 110% at 24% 8%,var(--g-a) 0,var(--g-b) 40%,var(--g-c) 100%);
+  box-shadow:inset 0 2px 1px var(--hl),0 var(--tt) 0 var(--g-s1),0 calc(var(--tt) + 3px) 5px var(--ao)}
+.hg-book{--th:4px;--tt:calc(var(--th) * var(--vk));color:var(--on-mint);background:radial-gradient(120% 110% at 24% 8%,var(--m-a) 0,var(--m-b) 36%,var(--m-c) 100%);
+  box-shadow:inset 0 2px 1px rgba(255,255,255,.85),0 calc(var(--tt) * .5) 0 var(--m-s1),0 var(--tt) 0 var(--m-s2),0 calc(var(--tt) + 4px) 7px var(--ao)}
+.hg-notif{--z:90px;border-radius:18px}
+.hg-notif+.hg-notif{--z:120px}
+.hg-total{--z:130px;justify-items:end} /* on the right: the white ring decoration covers the bottom left of the panel */
+/* the story's keyframes, redone so they never strip the volume: the chosen result rises towards you with a mint outline,
+   the button sinks, the tick sends out a ring */
+@keyframes chosen{to{translate:0 0 60px;outline-color:var(--m-c)}}
+@keyframes tap{50%{transform:translateY(3px) scale(.96)}}
+@keyframes ping{from{outline:3px solid var(--glow-c);outline-offset:0}to{outline:3px solid transparent;outline-offset:12px}}
+@keyframes lit{from{background:var(--well);color:var(--muted);box-shadow:inset 0 5px 9px -3px var(--well-sh)}50%{transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){.hg-hit{outline-color:var(--m-c);translate:0 0 60px}.hg-res{opacity:.5;filter:saturate(.3)}}
+
+/* ---------- pains ---------- */
+.pain-face{border-radius:30px;padding:20px 22px 18px;gap:8px}
+/* compact cards: the icon and the title share the first row */
+.pain-top{display:flex;align-items:center;gap:14px;margin-bottom:2px}
+.pain-top .pain-ico{flex:none;width:42px;height:42px;margin:0;border-radius:14px}
+.pain-h{font-size:1.08rem}
+.pain-p{font-size:.92rem;line-height:1.45}
+.pain-hint{padding-top:6px}
+.pain-ico{border-radius:16px;--top-a:var(--g-a);--top-b:var(--g-b);--top-c:var(--g-c);--side-1:var(--g-s1);--side-2:var(--g-s2);color:var(--on-grey)}
+.pain-hint{color:var(--forest)}
+/* opening a card, like a deck: the solution lies under the card with its mint edge peeking out, and a click or tap swaps them.
+   One state number --o runs 0 → 1 (--s rises and falls along the way) and draws the whole swap */
+@property --o{syntax:"<number>";inherits:true;initial-value:0}
+.pain{transition:transform .5s var(--ease),--o .7s cubic-bezier(.45,0,.2,1)}
+.pain[aria-pressed="true"]{--o:1}
+.pain-face{--s:sin(var(--o) * 180deg)}
+.pain-front{z-index:calc(1 - var(--o));translate:0 calc(var(--o) * 26px - var(--s) * 24%);scale:calc(1 - .06 * var(--o))} /* z-index rounds: they swap halfway */
+.pain-back{z-index:calc(var(--o));translate:0 calc((1 - var(--o)) * 26px + var(--s) * 10%);scale:calc(.94 + .06 * var(--o))}
+.pain-back .pain-tag{background:rgba(13,56,40,.1);box-shadow:inset 0 2px 4px rgba(13,56,40,.28),0 1px 0 rgba(255,255,255,.6)} /* a mint well: a mint pill would vanish on the mint face */
+/* the back: the result on top, then what I do. Bullets are spans: a card is a button, lists are not allowed inside */
+.pain-back{justify-content:flex-start}
+.pain-back .pain-fix{font-size:1.08rem;font-weight:600;letter-spacing:-.015em;line-height:1.3;margin-bottom:2px}
+.pain-do{display:flex;flex-direction:column;gap:6px}
+.pain-do>span{position:relative;padding-left:18px;font-size:.9rem;line-height:1.38}
+.pain-do>span::before{content:"";position:absolute;left:2px;top:.5em;width:8px;height:8px;border-radius:50%;background:var(--on-mint);opacity:.75}
+@media (prefers-reduced-motion:reduce){.pain{transition:none}}
+.cta-row{border-radius:30px}
+
+/* ---------- calculator ---------- */
+.calc{border-radius:36px}
+.calc-out{border-radius:28px}
+.preset{color:var(--on-grey);--top-a:var(--g-a);--top-b:var(--g-b);--top-c:var(--g-c);--side-1:var(--g-s1);--side-2:var(--g-s2)}
+.preset[aria-pressed="true"],.cost-q[aria-expanded="true"]{color:var(--on-mint);--top-a:var(--m-a);--top-b:var(--m-b);--top-c:var(--m-c);--side-1:var(--m-s1);--side-2:var(--m-s2)}
+.calc-copy,.calc-tg{color:var(--forest)}
+
+/* ---------- examples ---------- */
+.tab{color:var(--on-grey);--top-a:var(--g-a);--top-b:var(--g-b);--top-c:var(--g-c);--side-1:var(--g-s1);--side-2:var(--g-s2)}
+.tab[aria-pressed="true"]{color:var(--on-mint)}
+.tab:hover{background:radial-gradient(120% 110% at 24% 8%,var(--top-a) 0,var(--top-b) 36%,var(--top-c) 100%)}
+.tabs{padding-bottom:calc(5px * var(--vk) + 6px)}
+.kinds{padding:5px}
+.kinds::before{inset:5px auto 5px 5px;width:calc(50% - 5px);background:radial-gradient(120% 110% at 24% 8%,var(--m-a) 0,var(--m-b) 36%,var(--m-c) 100%);
+  box-shadow:inset 0 2px 1px rgba(255,255,255,.85),0 calc(1.5px * var(--vk)) 0 var(--m-s1),0 calc(3px * var(--vk)) 0 var(--m-s2),0 calc(3px * var(--vk) + 3px) 6px var(--ao)}
+.kinds:has(> :only-child)::before{width:calc(100% - 10px)}
+.kinds button[aria-pressed="true"]{color:var(--on-mint)}
+.ba>div{border-radius:22px}
+.ba-after::before{background:var(--top-b);box-shadow:0 3px 0 var(--side-2),0 6px 8px var(--ao)}
+.ba-tag{background:radial-gradient(120% 110% at 24% 8%,var(--top-a) 0,var(--top-b) 36%,var(--top-c) 100%)}
+.phone{box-shadow:0 calc(12px * var(--vk)) 0 -2px #14111B,calc(12px * var(--vk) * .4) calc(12px * var(--vk) + 34px) var(--blur-cast) -12px var(--cast)}
+
+/* ---------- comparison ---------- */
+.cmp .me{background:color-mix(in srgb,var(--m-b) 22%,transparent)}
+.cmp thead .me{color:var(--on-mint);background:var(--iri)}
+@media (max-width:900px){
+  .cmp-wrap{background:none;box-shadow:none}
+  .cmp tr{--th:8px;--tt:calc(var(--th) * var(--vk));border:0;backdrop-filter:none;-webkit-backdrop-filter:none;
+    background:radial-gradient(120% 110% at 24% 8%,var(--top-a) 0,var(--top-b) 36%,var(--top-c) 100%);
+    box-shadow:inset 0 3px 2px var(--hl),inset 0 -14px 20px -12px var(--curve),0 calc(var(--tt) * .5) 0 var(--side-1),0 var(--tt) 0 var(--side-2),
+      0 calc(var(--tt) + 4px) 8px var(--ao),calc(var(--tt) * .4) calc(var(--tt) + 24px) 40px -12px var(--cast);
+    margin-bottom:calc(var(--tt) + 10px)}
+}
+
+/* ---------- prices: the recommended plan sits on two slabs ---------- */
+.plan.rec{padding-top:40px;
+  --glow:0 0 0 2px var(--m-c),0 0 40px -8px var(--glow-c),
+    0 calc(var(--tt) + 14px) 0 -10px var(--side-1),0 calc(var(--tt) + 28px) 0 -20px var(--side-2);
+  margin-bottom:28px}
+.plan-inc li::before{color:var(--forest)}
+.plan-badge{top:-18px}
+.price-list li{border-radius:26px}
+.pl-price{padding:5px 14px}
+
+/* ---------- how I work ---------- */
+.stick{border-radius:40px}
+.steps .n{border-radius:18px;color:var(--muted)}
+.steps li.passed .n{color:var(--forest)}
+.steps li.on .n{color:var(--on-mint);--glow:0 0 22px -4px var(--glow-c)}
+.steps::before{left:21px;width:10px;border-radius:9px;background:var(--well);box-shadow:inset 4px 0 8px var(--well-sh),0 1px 0 var(--hl)}
+.steps::after{left:23px;width:6px;border-radius:9px;background:linear-gradient(var(--m-a),var(--m-c));box-shadow:0 0 14px var(--glow-c)}
+.step-meta div{border-radius:999px}
+
+/* ---------- faq ---------- */
+.faq{gap:calc(8px * var(--vk) + 10px)}
+.faq summary::after{border:0;color:var(--muted)}
+.faq details[open] summary::after{color:var(--on-mint);background:radial-gradient(circle at 34% 28%,#fff 0,var(--m-b) 45%,var(--m-c) 100%);
+  box-shadow:0 calc(3px * var(--vk)) 0 var(--m-s2),0 calc(3px * var(--vk) + 4px) 8px var(--ao),0 0 18px -2px var(--glow-c)}
+
+/* ---------- contact and footer ---------- */
+.review{border-radius:28px}
+.review li::before{background:var(--m-c)}
+.review li.warn::before{background:var(--butter)}
+.contact-steps li{border-radius:999px;padding:8px 16px 8px 8px}
+.contact-steps li::before{color:var(--on-mint);background:radial-gradient(circle at 34% 28%,#fff 0,var(--m-b) 45%,var(--m-c) 100%);box-shadow:0 2px 0 var(--m-s2)}
+.contact .btn-lemon{color:var(--on-mint)}
+.contact .btn-line:hover{color:var(--on-grey)}
+.partner{border-radius:26px}
+.mbar{border-radius:999px}
+
+/* "Глубже": cards lean towards the pointer (core/tilt.ts sets --rx/--ry and .tilting; desktop only) */
+.plans,.contact .wrap{perspective:1400px}
+:is(.plan,.review){transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+:root:not([data-depth="flat"]) :is(.plan,.review).tilting{transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-6px)}
+@media (prefers-reduced-motion:reduce){.btn,:is(.plan,.review){transition:none}}
+
+/* thick pieces need room below them: rows that wrap and stacked cards get gaps that grow with the depth */
+.tabs,.presets,.cost-opts,.facts,.contact-steps,.contact-btns,.hero-ctas,.step-meta,.cta-acts,.pl-inc{row-gap:calc(6px * var(--vk) + 8px)}
+.pains{row-gap:calc(10px * var(--vk) + 18px)}
+.pains li{padding-bottom:14px} /* room for the solution's edge peeking out under the card */
+.price-list{gap:calc(8px * var(--vk) + 12px)}
+.cta-row{margin-top:calc(8px * var(--vk) + 20px)}
+/* swipe rows: room for the sides and the cast shadows, which overflow scrolling would cut off */
+@media (max-width:900px){
+  .plans,.cmp tbody{padding-bottom:calc(10px * var(--vk) + 44px);margin-bottom:-28px}
+}
+@media (max-width:640px){
+  .pains{padding-bottom:calc(10px * var(--vk) + 44px);margin-bottom:-28px}
+}
+
+/* clay bands between sections (the SVGs are in index.html): every other section lies on a band of clay with soft wavy edges.
+   The far edge catches the light, the near one shows the band's thickness and casts a shadow */
+:root{--band:color-mix(in srgb,var(--top-b) 86%,var(--paper))}
+.band{background:var(--band)}
+.wave{position:absolute;left:0;width:100%;pointer-events:none;z-index:0}
+.wave-top{top:-79px;height:80px;filter:drop-shadow(0 -10px 16px var(--ao))}
+.wave-bottom{bottom:-109px;height:110px;filter:drop-shadow(0 18px 22px var(--ao))}
+.wave .surf{fill:var(--band)}
+.wave .side{fill:var(--side-1)}
+.wave .lip{fill:none;stroke:var(--hl);stroke-width:3;vector-effect:non-scaling-stroke}
+@media (max-width:640px){
+  .wave-top{top:-47px;height:48px}
+  .wave-bottom{bottom:-65px;height:66px}
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Бриф на сайт</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="brief-page">
+<div class="field" aria-hidden="true"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i><i class="f5"></i></div>
+<div class="pearl" aria-hidden="true"><i></i></div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><img class="brand-mark" src="/logo.svg" alt="" width="34" height="34"><span data-s="title"></span></a>
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" data-lang="uk" aria-pressed="false">UA</button>
+      <button type="button" data-lang="pl" aria-pressed="false">PL</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap b-main">
+  <h1 data-s="h1"></h1>
+  <p class="b-draft"><span class="b-star" aria-hidden="true">*</span><span data-s="draft"></span></p>
+  <nav class="b-map" id="b-map" aria-label="Sections"></nav>
+  <form id="brief" novalidate></form>
+  <div class="b-bar">
+    <span class="b-progress" id="b-progress"></span>
+    <span class="b-status" id="b-status" role="status"></span>
+    <button class="btn btn-primary" id="b-send" type="submit" form="brief" data-s="send"></button>
+  </div>
+  <div class="b-result" id="b-result" hidden></div>
+</main>
+<script type="module" src="/src/brief/main.ts"></script>
+</body>
+</html>

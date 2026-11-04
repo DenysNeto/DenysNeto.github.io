@@ -1,0 +1,81 @@
+/* "How I work": steps scroll on one side, a pinned scene on the other switches per step (emote.agency mechanic) */
+:root{
+  --s-paper:#2C2350; --s-paper2:#3A2F66; --s-line:#E9E2F8; --s-text:#F1ECFA;
+  --c1:var(--pink); --c2:var(--butter); --c3:var(--sky); --c4:var(--lilac); --c5:var(--mintc);
+}
+.ap{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(24px,5vw,70px);align-items:start;margin-top:24px}
+.stick{position:sticky;top:110px;border-radius:44px;padding:24px}
+.steps{position:relative;list-style:none;margin:0;padding:4vh 0 14vh}
+.steps li{min-height:38vh;display:flex;gap:20px;align-items:flex-start;cursor:pointer}
+/* the text of the other steps fades back; the numbers stay solid so the rail reads as one line */
+.steps li>div{opacity:.38;transition:opacity .5s}
+.steps li.on>div{opacity:1}
+.steps .n{position:relative;z-index:1;flex:none;width:52px;height:52px;border-radius:18px;display:grid;place-items:center;font-weight:600;font-size:18px;
+  color:var(--muted);background:linear-gradient(var(--glass-s),var(--glass-s)),var(--paper);border:1px solid var(--glass-b);
+  transition:background .5s,box-shadow .5s,color .5s,border-color .5s}
+.steps li.passed .n{color:var(--ink);border-color:var(--lilac)}
+/* progress rail through the numbers: core/process.ts sets --rail-top/--rail-h and --k, how far down the active step is */
+.steps::before,.steps::after{content:"";position:absolute;left:24.5px;top:var(--rail-top,0);width:3px;height:var(--rail-h,0);border-radius:2px}
+.steps::before{background:var(--line)}
+.steps::after{background:linear-gradient(var(--clay-peach-deep),var(--clay-lilac-deep),var(--clay-mint-deep));
+  clip-path:inset(0 0 calc(100% - var(--k,0) * 100%) 0);transition:clip-path .7s var(--ease)}
+.steps li.on .n{background:linear-gradient(135deg,var(--pink),var(--butter),var(--sky));color:#2B2540;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 10px 20px -10px rgba(90,70,150,.5)}
+.steps h3{font-size:clamp(26px,2.6vw,34px);font-weight:500;letter-spacing:-.025em;line-height:1.1;margin:8px 0 12px}
+.steps p{margin:0;color:var(--muted);max-width:42ch}
+.step-meta{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}
+.step-meta div{display:flex;align-items:baseline;gap:6px;padding:6px 14px;border-radius:999px;background:var(--glass-s);border:1px solid var(--glass-b);font-size:.88rem}
+.step-meta dt{color:var(--muted)}
+.step-meta dd{margin:0;font-weight:600}
+.steps li.on .step-meta div:last-child{background:var(--iri);border-color:transparent;color:#2B2540}
+.steps li.on .step-meta div:last-child dt{color:#2B2540;opacity:.7}
+@media (max-width:980px){
+  .ap{grid-template-columns:1fr}
+  .stick{order:-1;top:84px;z-index:2;padding:12px;border-radius:30px;max-width:420px;margin:0 auto;width:100%}
+  .steps{padding:0 0 8vh}.steps li{min-height:32vh}
+}
+@media (max-width:640px){.stick{max-width:300px}}
+
+.scenes{position:relative;aspect-ratio:5/4;width:100%}
+.scene{position:absolute;inset:0;opacity:0;transform:scale(.94) translateY(10px);transition:opacity .5s var(--ease),transform .7s var(--ease);pointer-events:none}
+.scene.on{opacity:1;transform:none}
+.scene svg{display:block;width:100%;height:100%;overflow:visible}
+.scene .st{font:500 14px/1 var(--body);fill:var(--s-text)}.scene .st.b{font-weight:600}
+.scene *{transform-box:fill-box;transform-origin:center}
+.scene .pop{opacity:0;transform:translateY(10px) scale(.9)}
+.scene.on .pop{animation:s-pop .6s var(--ease) forwards}
+.scene.on .d1{animation-delay:.15s}.scene.on .d2{animation-delay:.35s}.scene.on .d3{animation-delay:.55s}
+.scene.on .d4{animation-delay:.75s}.scene.on .d5{animation-delay:.95s}.scene.on .d6{animation-delay:1.15s}
+@keyframes s-pop{to{opacity:1;transform:none}}
+.scene.on .bob{animation:s-bob 6s ease-in-out infinite}
+@keyframes s-bob{50%{transform:translateY(-6px)}}
+.scene.on .dot{animation:s-dot 1.2s ease-in-out infinite}.scene .t2{animation-delay:.15s!important}.scene .t3{animation-delay:.3s!important}
+@keyframes s-dot{30%{transform:translateY(-4px)}}
+.scene.on .drift{animation:s-pop .6s .35s var(--ease) forwards,s-bob 5s 1s ease-in-out infinite}
+.scene.on .drift2{animation:s-pop .6s .55s var(--ease) forwards,s-bob 7s 1s ease-in-out infinite}
+.scene .swing{transform-origin:50% 0}.scene.on .swing{animation:s-swing 3s ease-in-out infinite}
+@keyframes s-swing{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.scene .cursor{transform:translate(330px,300px);opacity:0}
+.scene.on .cursor{animation:s-cur 1.1s 1.2s var(--ease) forwards}
+@keyframes s-cur{to{transform:translate(282px,114px);opacity:1}}
+.scene .ripple{opacity:0}.scene.on .ripple{animation:s-rip .7s 2.3s ease-out forwards}
+@keyframes s-rip{0%{opacity:.9;transform:scale(.4)}100%{opacity:0;transform:scale(2.2)}}
+.scene.on .sbtn{animation:s-pop .6s .55s var(--ease) forwards,s-press .25s 2.3s ease-in-out}
+@keyframes s-press{50%{transform:scale(.92)}}
+.scene .pin{transform:translateY(-120px);opacity:0}
+.scene.on .pin{animation:s-drop .8s .5s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes s-drop{to{transform:none;opacity:1}}
+.scene .shadow{transform:scale(.2)}.scene.on .shadow{animation:s-sh .8s .5s ease-out forwards}
+@keyframes s-sh{to{transform:none}}
+.scene .stem{stroke-dasharray:140;stroke-dashoffset:140}.scene.on .stem{animation:s-draw 1s .1s ease-out forwards}
+@keyframes s-draw{to{stroke-dashoffset:0}}
+.scene .bar{transform-origin:50% 100%;transform:scaleY(.1)}
+.scene.on .bar{animation:s-grow .9s var(--ease) forwards}.scene.on .b2{animation-delay:.2s}.scene.on .b3{animation-delay:.4s}
+@keyframes s-grow{to{transform:none}}
+.scene.on .tw{animation:s-tw 2.4s ease-in-out infinite}.scene.on .tw2{animation-delay:1.2s}
+@keyframes s-tw{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:1;transform:scale(1.1)}}
+@media (prefers-reduced-motion:reduce){
+  .steps::after,.steps li>div,.steps .n{transition:none}
+  .scene .pop,.scene .pin,.scene .cursor,.scene .shadow{opacity:1;transform:none}
+  .scene .stem{stroke-dashoffset:0}.scene .bar{transform:none}
+  .scene *,.scene{animation:none!important;transition:none!important}
+}
