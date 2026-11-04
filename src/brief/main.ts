@@ -521,44 +521,6 @@ function setLang(l: Lang): void {
   renderMap();
   render();
 }
-/** The conveyor (brief.css): the board is cut at the roller under the header, so the page seems to run into it.
- *  The rows just before the roller tip away from the viewer, as a belt bends over its roller, and the roller's ribs
- *  move with the scroll as if it turned. Only small rows tip: a whole tall card tipping would look like it falls over */
-const roller = document.getElementById("b-roller")!, board = document.querySelector<HTMLElement>(".b-main")!, pill = document.querySelector<HTMLElement>(".top .wrap")!;
-const ROWS = ".b-main>h1,.b-draft,.b-go,.b-sec>summary,.f-l,.f-h,.f input,.f textarea,.chip,.msel-btn,.mood,.pal,.font,.look-tab,.ref-add,.drop,.pv-phone,.pv-zoom,.pv-note,.look-auto";
-/** How far before the roller a row starts to bend, and how far it tips at the roller */
-const BEND = 120, TIP = 58;
-const tipped = new Set<HTMLElement>();
-function belt(): void {
-  const p = pill.getBoundingClientRect(), b = board.getBoundingClientRect();
-  const line = p.bottom + 12; // the roller, just under the header and its clay edge
-  const cut = line + 10 - b.top; // how much of the board has gone into the roller (to its middle)
-  roller.classList.toggle("on", cut > 0);
-  roller.style.cssText = `left:${b.left}px;width:${b.width}px;top:${line}px;--turn:${(-scrollY * 0.6).toFixed(1)}px`;
-  // a negative inset on the sides and bottom keeps the board's own clay shadow
-  board.style.clipPath = cut > 0 ? `inset(${cut}px -60px -60px -60px)` : "";
-  // read every row first, then write, so the browser lays out once
-  const now: [HTMLElement, number][] = [];
-  if (cut > 0) for (const el of board.querySelectorAll<HTMLElement>(ROWS)) {
-    const r = el.getBoundingClientRect();
-    if (r.bottom < line || r.top > line + BEND || r.height > 160) continue;
-    const k = Math.min(1, 1 - (r.top - line) / BEND); // 0 far from the roller, 1 at it
-    now.push([el, k * k * TIP]);
-  }
-  const keep = new Set(now.map(([el]) => el));
-  for (const el of tipped) if (!keep.has(el)) { el.classList.remove("b-tip-row"); el.style.transform = ""; tipped.delete(el); }
-  for (const [el, deg] of now) {
-    el.classList.add("b-tip-row");
-    el.style.transform = `perspective(600px) rotateX(${deg.toFixed(1)}deg)`;
-    tipped.add(el);
-  }
-}
-let beltQueued = false;
-const queueBelt = (): void => { if (!beltQueued) { beltQueued = true; requestAnimationFrame(() => { beltQueued = false; belt(); }); } };
-addEventListener("scroll", queueBelt, { passive: true });
-addEventListener("resize", queueBelt);
-belt();
-
 // the page's own language: /ru/brief.html, /uk/brief.html… (vite.config.ts); the draft survives the switch
 const pageLang = document.documentElement.lang;
 setLang((LANGS as string[]).includes(pageLang) ? pageLang as Lang : "ru");

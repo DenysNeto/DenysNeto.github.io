@@ -326,17 +326,3 @@
 
 /* the brief and its bar are hidden after sending; their own display rules must not bring them back */
 .b-main [hidden]{display:none !important}
-
-/* the conveyor: scrolling down, the page board runs into the header like a checkout belt under its roller.
-   main.ts clips the board at the roller, tips the rows just before it away from the viewer and turns the roller's ribs with the scroll;
-   the shade under the roller is the belt bending down */
-.b-roller{position:fixed;z-index:19;left:0;top:0;height:110px;pointer-events:none;opacity:0;transition:opacity .25s}
-.b-roller.on{opacity:1}
-.b-roll{position:absolute;inset:-4px -4px auto;height:22px;border-radius:11px;
-  background:linear-gradient(to bottom,rgba(255,255,255,.34),rgba(255,255,255,.08) 30%,rgba(0,0,0,.15) 60%,rgba(0,0,0,.65)),
-    repeating-linear-gradient(to bottom,#4A4358 0 2px,#2B2636 2px 5px);
-  background-position:0 0,0 var(--turn,0px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 3px 0 #15111D,0 10px 16px -4px rgba(0,0,0,.7)}
-.b-roller::after{content:"";position:absolute;inset:14px 0 0;border-radius:0 0 22px 22px;
-  background:linear-gradient(to bottom,rgba(10,8,18,.85),rgba(10,8,18,.45) 35%,rgba(10,8,18,.12) 70%,transparent)}
-.b-tip-row{transform-origin:50% 100%;will-change:transform}
