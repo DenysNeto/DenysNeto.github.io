@@ -2,7 +2,7 @@ import "../styles/base.css";
 // clay.css and phone.css come in through brief.css (@import): imported here they would become a chunk shared with the landing,
 // loaded before the landing's own files, and the landing needs them last
 import "../styles/brief.css";
-import { LANGS, t, tl, setCurrentLang, type Lang, type L10n } from "../i18n";
+import { LANGS, t, tl, getLang, setCurrentLang, type Lang, type L10n } from "../i18n";
 import { CONFIG } from "../config";
 import { FONT_KINDS, FONTS, MAX_REFS, MOODS, PALETTES, S, SECTIONS, type Field, type Section } from "./fields";
 import { botReady, sendBrief } from "./send";
@@ -461,9 +461,9 @@ function result(ok: boolean | "files", text = ""): void {
   box.hidden = false;
   box.innerHTML = ok === "files"
     ? `<h2>${t(S.doneH)}</h2><p>${t(S.filesP)}</p><div class="b-acts"><a class="btn btn-primary" href="https://t.me/${CONFIG.telegram}" target="_blank" rel="noopener">Telegram</a>
-       <a class="btn btn-soft" href="/">${t(S.back)}</a></div>`
+       <a class="btn btn-soft" href="/${getLang()}/">${t(S.back)}</a></div>`
     : ok
-    ? `<h2>${t(S.doneH)}</h2><p>${t(S.doneP)}</p><a class="btn btn-soft" href="/">${t(S.back)}</a>`
+    ? `<h2>${t(S.doneH)}</h2><p>${t(S.doneP)}</p><a class="btn btn-soft" href="/${getLang()}/">${t(S.back)}</a>`
     : `<h2>${t(S.failH)}</h2><p>${t(S.failP)}</p><div class="b-acts"><button type="button" class="btn btn-primary" id="b-copy">${t(S.copy)}</button>
        <a class="btn btn-soft" href="https://t.me/${CONFIG.telegram}" target="_blank" rel="noopener">Telegram</a></div>`;
   document.getElementById("b-copy")?.addEventListener("click", async e => {
@@ -514,7 +514,6 @@ function setLang(l: Lang): void {
   setCurrentLang(l);
   document.documentElement.lang = l;
   try { localStorage.setItem("pf-lang", l); } catch { /* storage unavailable */ }
-  document.querySelectorAll<HTMLElement>("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === l)));
   document.title = `${t(S.title)} — ${CONFIG.name}`;
   document.querySelectorAll<HTMLElement>("[data-s]").forEach(el => { el.textContent = t(S[el.dataset.s as keyof typeof S]); });
   document.querySelectorAll<HTMLElement>("[data-name]").forEach(el => { el.textContent = CONFIG.name; });
@@ -522,9 +521,44 @@ function setLang(l: Lang): void {
   renderMap();
   render();
 }
-document.querySelectorAll<HTMLElement>("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang as Lang)));
+/** The conveyor (brief.css): the board is cut at the roller under the header, so the page seems to run into it.
+ *  The rows just before the roller tip away from the viewer, as a belt bends over its roller, and the roller's ribs
+ *  move with the scroll as if it turned. Only small rows tip: a whole tall card tipping would look like it falls over */
+const roller = document.getElementById("b-roller")!, board = document.querySelector<HTMLElement>(".b-main")!, pill = document.querySelector<HTMLElement>(".top .wrap")!;
+const ROWS = ".b-main>h1,.b-draft,.b-go,.b-sec>summary,.f-l,.f-h,.f input,.f textarea,.chip,.msel-btn,.mood,.pal,.font,.look-tab,.ref-add,.drop,.pv-phone,.pv-zoom,.pv-note,.look-auto";
+/** How far before the roller a row starts to bend, and how far it tips at the roller */
+const BEND = 120, TIP = 58;
+const tipped = new Set<HTMLElement>();
+function belt(): void {
+  const p = pill.getBoundingClientRect(), b = board.getBoundingClientRect();
+  const line = p.bottom + 12; // the roller, just under the header and its clay edge
+  const cut = line + 10 - b.top; // how much of the board has gone into the roller (to its middle)
+  roller.classList.toggle("on", cut > 0);
+  roller.style.cssText = `left:${b.left}px;width:${b.width}px;top:${line}px;--turn:${(-scrollY * 0.6).toFixed(1)}px`;
+  // a negative inset on the sides and bottom keeps the board's own clay shadow
+  board.style.clipPath = cut > 0 ? `inset(${cut}px -60px -60px -60px)` : "";
+  // read every row first, then write, so the browser lays out once
+  const now: [HTMLElement, number][] = [];
+  if (cut > 0) for (const el of board.querySelectorAll<HTMLElement>(ROWS)) {
+    const r = el.getBoundingClientRect();
+    if (r.bottom < line || r.top > line + BEND || r.height > 160) continue;
+    const k = Math.min(1, 1 - (r.top - line) / BEND); // 0 far from the roller, 1 at it
+    now.push([el, k * k * TIP]);
+  }
+  const keep = new Set(now.map(([el]) => el));
+  for (const el of tipped) if (!keep.has(el)) { el.classList.remove("b-tip-row"); el.style.transform = ""; tipped.delete(el); }
+  for (const [el, deg] of now) {
+    el.classList.add("b-tip-row");
+    el.style.transform = `perspective(600px) rotateX(${deg.toFixed(1)}deg)`;
+    tipped.add(el);
+  }
+}
+let beltQueued = false;
+const queueBelt = (): void => { if (!beltQueued) { beltQueued = true; requestAnimationFrame(() => { beltQueued = false; belt(); }); } };
+addEventListener("scroll", queueBelt, { passive: true });
+addEventListener("resize", queueBelt);
+belt();
 
-let saved: string | null = null;
-try { saved = localStorage.getItem("pf-lang"); } catch { /* storage unavailable */ }
-const guess = saved ?? (navigator.language.startsWith("uk") ? "uk" : navigator.language.startsWith("pl") ? "pl" : "ru");
-setLang((LANGS as string[]).includes(guess) ? guess as Lang : "ru");
+// the page's own language: /ru/brief.html, /uk/brief.html… (vite.config.ts); the draft survives the switch
+const pageLang = document.documentElement.lang;
+setLang((LANGS as string[]).includes(pageLang) ? pageLang as Lang : "ru");

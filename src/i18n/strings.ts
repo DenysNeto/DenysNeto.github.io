@@ -165,7 +165,14 @@ export const I = {
   footnote: T("Примеры на этой странице — демо-версии, сделанные, чтобы вы могли попробовать сайт или бота до заказа.",
               "Приклади на цій сторінці — демо-версії, зроблені, щоб ви могли спробувати сайт або бота до замовлення.",
               "Przykłady na tej stronie to wersje demo, przygotowane po to, żeby można było wypróbować stronę lub bota przed zamówieniem."),
-  title: T("{name} — сайты для бизнеса в Польше", "{name} — сайти для бізнесу в Польщі", "{name} — strony internetowe dla firm w Polsce")
+  title: T("{name} — сайты для бизнеса в Польше", "{name} — сайти для бізнесу в Польщі", "{name} — strony internetowe dla firm w Polsce"),
+  meta_desc: T("Сайты и Telegram-боты для малого бизнеса в Польше: клиенты находят вас в Google, сами записываются и считают цену. Польский, украинский и русский.",
+               "Сайти й Telegram-боти для малого бізнесу в Польщі: клієнти знаходять вас у Google, самі записуються й рахують ціну. Польська, українська та російська.",
+               "Strony i boty w Telegramie dla małych firm w Polsce: klienci znajdują Cię w Google, sami się umawiają i liczą cenę. Po polsku, ukraińsku i rosyjsku."),
+  og_title: T("Сайты для бизнеса в Польше", "Сайти для бізнесу в Польщі", "Strony internetowe dla firm w Polsce"),
+  og_desc: T("Сайты с онлайн-записью, калькулятором и формой заявки. Польский, украинский и русский.",
+             "Сайти з онлайн-записом, калькулятором і формою заявки. Польська, українська та російська.",
+             "Strony z rezerwacją online, kalkulatorem i formularzem zgłoszenia. Po polsku, ukraińsku i rosyjsku.")
 } satisfies Record<string, L10n>;
 
 export type StringKey = keyof typeof I;

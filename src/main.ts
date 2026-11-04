@@ -130,7 +130,6 @@ document.getElementById("prices")!.addEventListener("click", e => {
   document.getElementById(q.dataset.hint!)!.hidden = !open;
 });
 
-document.querySelectorAll<HTMLElement>("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === getLang())));
 }
 
 function setLang(l: Lang): void {
@@ -147,15 +146,12 @@ document.getElementById("painList")!.addEventListener("click", e => {
   card?.setAttribute("aria-pressed", String(card.getAttribute("aria-pressed") !== "true"));
 });
 
-document.querySelectorAll<HTMLElement>("[data-lang]").forEach(b =>
-  b.addEventListener("click", () => setLang(b.dataset.lang as Lang)));
-
-// Initial language: saved choice, then browser language, then Russian
-let saved: string | null = null;
-try { saved = localStorage.getItem("pf-lang"); } catch { /* storage unavailable */ }
-const browser = navigator.language.slice(0, 2);
-const guess = saved ?? (browser === "uk" ? "uk" : browser === "pl" ? "pl" : "ru");
-setLang((LANGS as string[]).includes(guess) ? (guess as Lang) : "ru");
+// Each language has its own address (/ru/, /uk/, /pl/: vite.config.ts); the page says which one it is.
+// The language links in the header go to the other addresses, keeping the section the visitor is on
+const pageLang = document.documentElement.lang;
+setLang((LANGS as string[]).includes(pageLang) ? (pageLang as Lang) : "ru");
+document.querySelectorAll<HTMLAnchorElement>("[data-lang]").forEach(a =>
+  a.addEventListener("click", () => { a.hash = location.hash; }));
 initStage();
 initMood();
 initThread();
