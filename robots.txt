@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://denysneto.github.io/sitemap.xml

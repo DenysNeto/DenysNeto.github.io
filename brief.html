@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Denys</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="alternate" hreflang="ru" href="https://denysneto.github.io/ru/brief.html">
+<link rel="alternate" hreflang="uk" href="https://denysneto.github.io/uk/brief.html">
+<link rel="alternate" hreflang="pl" href="https://denysneto.github.io/pl/brief.html">
+<link rel="alternate" hreflang="en" href="https://denysneto.github.io/en/brief.html">
+<script>
+var l; try { l = localStorage.getItem("pf-lang"); } catch (e) {}
+var b = (navigator.language || "").slice(0, 2);
+if (["ru","uk","pl","en"].indexOf(l) < 0) l = b === "uk" ? "uk" : b === "pl" ? "pl" : b === "en" ? "en" : "ru";
+location.replace("/" + l + "/brief.html" + location.search + location.hash);
+</script>
+</head>
+<body style="background:#1A1430;color:#F1ECFA;font-family:system-ui,sans-serif;text-align:center;padding:40px">
+<a href="/ru/brief.html" style="color:#ACE6D1">Русский</a> · <a href="/uk/brief.html" style="color:#ACE6D1">Українська</a> · <a href="/pl/brief.html" style="color:#ACE6D1">Polski</a> · <a href="/en/brief.html" style="color:#ACE6D1">English</a>
+</body>
+</html>

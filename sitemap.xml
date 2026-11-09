@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://denysneto.github.io/ru/</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://denysneto.github.io/ru/"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://denysneto.github.io/uk/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://denysneto.github.io/pl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://denysneto.github.io/en/"/>
+  </url>
+  <url>
+    <loc>https://denysneto.github.io/uk/</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://denysneto.github.io/ru/"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://denysneto.github.io/uk/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://denysneto.github.io/pl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://denysneto.github.io/en/"/>
+  </url>
+  <url>
+    <loc>https://denysneto.github.io/pl/</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://denysneto.github.io/ru/"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://denysneto.github.io/uk/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://denysneto.github.io/pl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://denysneto.github.io/en/"/>
+  </url>
+  <url>
+    <loc>https://denysneto.github.io/en/</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://denysneto.github.io/ru/"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://denysneto.github.io/uk/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://denysneto.github.io/pl/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://denysneto.github.io/en/"/>
+  </url>
+  <url>
+    <loc>https://denysneto.github.io/ru/examples.html</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://denysneto.github.io/ru/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://denysneto.github.io/uk/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://denysneto.github.io/pl/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://denysneto.github.io/en/examples.html"/>
+  </url>
+  <url>
+    <loc>https://denysneto.github.io/uk/examples.html</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://denysneto.github.io/ru/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://denysneto.github.io/uk/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://denysneto.github.io/pl/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://denysneto.github.io/en/examples.html"/>
+  </url>
+  <url>
+    <loc>https://denysneto.github.io/pl/examples.html</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://denysneto.github.io/ru/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://denysneto.github.io/uk/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://denysneto.github.io/pl/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://denysneto.github.io/en/examples.html"/>
+  </url>
+  <url>
+    <loc>https://denysneto.github.io/en/examples.html</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://denysneto.github.io/ru/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://denysneto.github.io/uk/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://denysneto.github.io/pl/examples.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://denysneto.github.io/en/examples.html"/>
+  </url>
+</urlset>
